@@ -25,10 +25,3 @@ cd ../frontend
 npm install
 npm start
 # Opens http://localhost:4200 connected to http://localhost:8000/api/v1
-
-ScreenShots:
-
-1. Login Page
-
-
-
