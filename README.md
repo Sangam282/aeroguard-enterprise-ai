@@ -28,12 +28,7 @@ npm start
 
 ScreenShots:
 
-<img width="1920" height="961" alt="image" src="https://github.com/user-attachments/assets/3374aef8-67c1-4175-90e0-33659b0985eb" />
+1. Login Page
 
-<img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/5822d3ff-942a-4fde-ac3b-ff2c39134671" />
 
-<img width="1920" height="961" alt="image" src="https://github.com/user-attachments/assets/71d29b91-8d43-4238-8878-d0f78fdd372d" />
 
-<img width="1920" height="961" alt="image" src="https://github.com/user-attachments/assets/4557c411-f557-4456-97a6-dab911e3f0dc" />
-
-<img width="1920" height="994" alt="image" src="https://github.com/user-attachments/assets/4718e2b0-a2ed-4fa2-88ad-02be32d6afd0" />
