@@ -17,5 +17,5 @@ COPY . .
 # Expose port 8080 as required by Cloud Run
 EXPOSE 8080
 
-# Run migrations, collect static assets, and start Gunicorn server
-CMD python backend/manage.py migrate && python backend/manage.py collectstatic --noinput && gunicorn aeroguard_backend.wsgi:application --bind 0.0.0.0:8080
+# Run migrations, collect static assets, and start Gunicorn server with pythonpath
+CMD python backend/manage.py migrate && python backend/manage.py collectstatic --noinput && gunicorn --pythonpath backend aeroguard_backend.wsgi:application --bind 0.0.0.0:8080
