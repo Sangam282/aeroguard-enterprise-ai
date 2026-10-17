@@ -1,9 +1,12 @@
 import os
 from pathlib import Path
 
+# BASE_DIR points to backend/; we can reference the root project directory via BASE_DIR.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
+ROOT_PROJECT_DIR = BASE_DIR.parent
+
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'aeroguard-factorymind-enterprise-secret-2026-x99')
-DEBUG = True
+DEBUG = False  # Set to False for production deployment on Cloud Run
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -21,6 +24,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <-- Added for efficient static file serving on Cloud Run
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -33,10 +37,13 @@ ROOT_URLCONF = 'aeroguard_backend.urls'
 AUTH_USER_MODEL = 'core.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
+# Point Django to Angular's compiled build directory for templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            ROOT_PROJECT_DIR / 'frontend' / 'dist' / 'aeroguard-factorymind-dashboard',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,5 +80,16 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
 STATIC_URL = '/static/'
+
+# Point Django to Angular's compiled static assets
+STATICFILES_DIRS = [
+    ROOT_PROJECT_DIR / 'frontend' / 'dist' / 'aeroguard-factorymind-dashboard',
+]
+
+# Where collectstatic will output bundled static files for WhiteNoise
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
