@@ -7,26 +7,6 @@ AeroGuard AI Enterprise (also called **FactoryMind** in the code) is an industri
 
 This README expands the original project notes into a demonstration guide, system architecture, operational walkthrough, deployment reference, and production-readiness roadmap. The original setup instructions are retained in the **Original setup notes (preserved)** section at the end.
 
-## Contents
-- [1. Project at a glance](#1-project-at-a-glance)
-- [2. What is implemented and what needs verification](#2-what-is-implemented-and-what-needs-verification)
-- [3. Architecture](#3-architecture)
-- [4. End-to-end system flow](#4-end-to-end-system-flow)
-- [5. Feature walkthrough for a live demo](#5-feature-walkthrough-for-a-live-demo)
-- [6. Machine-learning and explainability flow](#6-machine-learning-and-explainability-flow)
-- [7. Authentication and 2FA flow](#7-authentication-and-2fa-flow)
-- [8. API surface](#8-api-surface)
-- [9. Repository structure](#9-repository-structure)
-- [10. Run locally](#10-run-locally)
-- [11. Google Cloud Run deployment](#11-google-cloud-run-deployment)
-- [12. Verification and testing](#12-verification-and-testing)
-- [13. Production-readiness gaps and recommended changes](#13-production-readiness-gaps-and-recommended-changes)
-- [14. Prioritised future roadmap](#14-prioritised-future-roadmap)
-- [15. Suggested 5–7 minute presentation script](#15-suggested-5–7-minute-presentation-script)
-- [16. Troubleshooting](#16-troubleshooting)
-- [17. Security and safety notice](#17-security-and-safety-notice)
-- [18. Original setup notes (preserved)](#18-original-setup-notes-preserved)
-
 ## 1. Project at a glance
 
 ### Purpose
