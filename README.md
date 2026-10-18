@@ -472,33 +472,7 @@ Use environment variables and Secret Manager for:
 
 Do not bake secrets into the Docker image, commit them to source control, or place them in frontend environment files that are shipped to the browser.
 
-## 12. Verification and testing
-
-### Before presenting
-- [ ] Cloud Run service URL opens and is the expected current revision.
-- [ ] `/health/` and `/api/v1/health/` return successful responses.
-- [ ] Login accepts a valid demo account and rejects invalid credentials.
-- [ ] 2FA enrollment and verification work end-to-end.
-- [ ] Invalid, malformed, expired, and leading-zero OTP cases are handled correctly.
-- [ ] Protected API calls reject unauthenticated requests.
-- [ ] Role checks are verified on the server for both allowed and denied operations.
-- [ ] Normal and abnormal synthetic machine cases produce expected rule triggers.
-- [ ] ROI outputs change when machine telemetry/cost assumptions change.
-- [ ] UI failures are visible and not silently replaced by fake successful responses.
-- [ ] ML metrics are reproducible and their dataset provenance is known.
-- [ ] External AI calls are confirmed from logs, not inferred from a label in the UI.
-- [ ] Cloud Run logs contain no passwords, tokens, OTPs, or secret values.
-
-### Recommended automated test layers
-1. **Unit tests** for anomaly thresholds, ROI formula boundaries, token validation, and TOTP.
-2. **Django tests** for endpoints, request validation, permissions, status codes, and database behaviour.
-3. **Frontend tests** for login/2FA state transitions, API error states, and dashboard data binding.
-4. **Contract tests** to ensure Angular request/response schemas match Django serializers/views.
-5. **End-to-end tests** against a disposable staging environment.
-6. **Cloud smoke tests** after every deployment.
-7. **ML evaluation tests** with pinned datasets and versioned metrics.
-
-## 13. Production-readiness gaps and recommended changes
+## 12. Production-readiness gaps and recommended changes
 
 This section is the priority list before using AeroGuard with real factories, accounts, or operational decisions.
 
@@ -561,7 +535,7 @@ This section is the priority list before using AeroGuard with real factories, ac
 - Define whether data is subject to customer contractual, industry, or jurisdiction-specific obligations; obtain qualified advice where needed.
 - Document the boundaries of AI recommendations and require qualified human approval for maintenance and safety actions.
 
-## 14. Prioritised future roadmap
+## 13. Prioritised future roadmap
 
 | Phase | Target | Deliverables / exit criteria |
 |---|---|---|
@@ -579,7 +553,7 @@ This section is the priority list before using AeroGuard with real factories, ac
 - **Reliability gate:** load test, alerting, rollback and incident-response drills completed.
 - **Human safety gate:** recommendations are advisory, procedures are visible, and only authorised people approve maintenance actions.
 
-## 15. Suggested 5–7 minute presentation script
+## 14. Suggested 5–7 minute presentation script
 
 1. **0:00–0:40 — Problem and value:** “Unexpected machine downtime affects throughput, quality, and cost. AeroGuard combines condition signals, explainable alerts, and maintenance decision support.”
 2. **0:40–1:20 — Architecture:** show the browser, Angular interface, Django API, analytics functions, and Cloud Run deployment.
@@ -593,7 +567,7 @@ This section is the priority list before using AeroGuard with real factories, ac
 ### Presentation fallback plan
 If an external AI endpoint or model training operation is slow/unavailable, use a precomputed **clearly labelled** demo result. Do not claim the fallback is a live prediction. Keep a second browser tab open to Cloud Run logs and the health endpoint.
 
-## 16. Troubleshooting
+## 15. Troubleshooting
 
 | Symptom | Likely cause | Checks |
 |---|---|---|
@@ -607,7 +581,7 @@ If an external AI endpoint or model training operation is slow/unavailable, use 
 | ML operation times out | Heavy computation inside synchronous web request or insufficient resources | Move training to a job/worker, add task status polling and limits |
 | Demo shows values after API failure | Mock fallback or swallowed API error | Inspect frontend error handling; show explicit unavailable/error state and log correlation ID |
 
-## 17. Security and safety notice
+## 16. Security and safety notice
 
 AeroGuard is a prototype/demo unless and until the production-readiness gates above have been completed. The current repository contains a SQLite database file and has code-level defaults that require review before production. The screenshot confirms that a Cloud Run deployment command succeeded; it does not certify the application as secure, durable, scalable, or ready for industrial operation.
 
@@ -616,42 +590,3 @@ AeroGuard is a prototype/demo unless and until the production-readiness gates ab
 - Do not connect an unvalidated prototype directly to safety-critical machine controls.
 - A prediction or generated hypothesis is not a confirmed diagnosis. Qualified personnel must validate findings and follow site-specific lockout/tagout and safety procedures.
 - Verify the current Google Cloud project, service URL, region, revision, IAM policy, logs, and configured environment before each presentation or release.
-
-## 18. Original setup notes (preserved)
-
-The following retains the original README's project identifier and setup instructions while adding the missing closing code fence and clearer formatting.
-
-# aeroguard-ai-enterprise-2.8
-
-AI Builder Cup 2026 (Google)
-
-### Phase 1 — Backend Setup, Database UUID Migration & Automated Test Suite
-
-```bash
-cd aeroguard-enterprise-ai-main/backend
-
-# Run the standalone end-to-end verification suite (zero external dependencies required)
-python3 core/test_suite.py
-
-# Create a virtual environment named 'venv'
-python3 -m venv venv
-
-# Activate the virtual environment
-source venv/bin/activate
-
-# Optional: Full Django REST Framework server startup
-pip install -r requirements.txt
-python3 manage.py makemigrations core
-python3 manage.py migrate
-python3 manage.py runserver 0.0.0.0:8000
-```
-
-### Phase 2 — Angular Frontend Setup & Local Development Server
-
-```bash
-cd ../frontend
-npm install
-npm start
-```
-
-The original notes state that the frontend opens at `http://localhost:4200` and connects to `http://localhost:8000/api/v1`. Confirm this against `frontend/dev-server.js` and the current frontend API configuration before relying on it.
