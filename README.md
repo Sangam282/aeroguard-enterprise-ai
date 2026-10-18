@@ -1,8 +1,6 @@
 # AeroGuard AI Enterprise — FactoryMind
 **AI Builder Cup 2026 (Google) | Industrial AI, Predictive Maintenance, Explainable Anomaly Detection**
 
-> **Deployment note:** The project owner’s deployment screenshot shows a successful Google Cloud Run deployment for service `aeroguard-enterprise-ai` in `asia-east1`, with 100% of traffic routed to revision `aeroguard-enterprise-ai-00008-fbx`. The displayed service URL is `https://aeroguard-enterprise-ai-908509519555.asia-east1.run.app`. Treat this as the URL shown at the time of that screenshot; verify the current URL and revision in Cloud Run before a live presentation.
-
 AeroGuard AI Enterprise (also called **FactoryMind** in the code) is an industrial operations dashboard concept that brings machine telemetry, deterministic anomaly checks, maintenance-cost estimation, machine-learning experiments, explainability, incident investigation, user administration, and time-based one-time password (TOTP) two-factor authentication (2FA) into one web application.
 
 This README expands the original project notes into a demonstration guide, system architecture, operational walkthrough, deployment reference, and production-readiness roadmap. The original setup instructions are retained in the **Original setup notes (preserved)** section at the end.
@@ -134,83 +132,7 @@ The exact frontend request sequence and authentication response schema should be
 6. **Investigation** — a structured response ranks possible causes and suggests checks/actions.
 7. **Operator review** — the operator should verify the machine, consult plant procedures, and approve any maintenance action. The software must not autonomously override industrial safety controls.
 
-## 5. Feature walkthrough for a live demo
-
-Use a demo account created specifically for the presentation. Do not display real credentials, secret keys, QR provisioning secrets, or production customer data.
-
-### Step 1 — Open the deployed application
-- Open the current Cloud Run URL from Google Cloud Console.
-- Confirm that the page loads over HTTPS.
-- Show the audience the dashboard navigation and explain that the product is intended to bring machine condition, anomaly evidence, and maintenance decisions into one workspace.
-- If the dashboard shows seeded/sample records, state that they are demonstration data.
-
-### Step 2 — Demonstrate login and 2FA
-- Enter the demo user's email and password.
-- If the account is not enrolled, follow the setup flow and scan the QR code with an authenticator app.
-- Enter the current six-digit TOTP.
-- Show that the protected dashboard becomes available only after the required verification.
-- Also demonstrate a wrong code being rejected, if this has been tested safely.
-
-### Step 3 — Show a normal machine
-Use a known-normal test payload with values below the configured rules, for example:
-
-```json
-{
-  "machine_code": "DEMO-CNC-01",
-  "vibration_mms": 2.9,
-  "baseline_vibration_mms": 2.8,
-  "temperature_c": 71.0,
-  "baseline_temp_c": 70.0,
-  "defect_rate_pct": 1.1,
-  "baseline_defect_pct": 1.0,
-  "days_since_maintenance": 11
-}
-```
-
-Explain that the algorithm compares the current readings with configured limits and baselines. This is a synthetic example, not a real machine reading.
-
-### Step 4 — Show an abnormal machine
-Use a second test case to demonstrate multiple triggers:
-
-```json
-{
-  "machine_code": "DEMO-CNC-02",
-  "vibration_mms": 8.2,
-  "baseline_vibration_mms": 3.1,
-  "temperature_c": 86.0,
-  "baseline_temp_c": 72.0,
-  "defect_rate_pct": 6.8,
-  "baseline_defect_pct": 1.2,
-  "days_since_maintenance": 47,
-  "output_uph": 365,
-  "hourly_downtime_rate_usd": 680,
-  "scrap_unit_cost_usd": 14.5,
-  "repair_kit_cost_usd": 1220
-}
-```
-
-Talk through the reasons for the alert: elevated vibration, thermal excursion, defect-rate increase, and overdue maintenance. Show the rule names and baseline comparisons if the deployed UI exposes them.
-
-### Step 5 — Explain maintenance ROI
-Explain the two scenarios:
-- **Intervene now:** estimated planned maintenance duration and cost.
-- **Ignore the warning:** modelled unplanned downtime, scrap and overhaul penalty.
-
-Point out that the output depends on configurable assumptions such as hourly downtime cost, part/scrap cost and repair-kit cost. It is a decision-support estimate, not a guaranteed saving or a substitute for plant-specific validation.
-
-### Step 6 — Present ML and explainability
-- Show dataset choices and training/evaluation results only if the UI and API expose them in the deployed version.
-- Explain the distinction between a **rule-based alert** (explicit threshold) and an **ML prediction** (learned from data).
-- Show the explanation/feature-attribution output and connect it to the measured features.
-- Be ready to explain data provenance, train/validation separation, class imbalance, metrics, and reproducibility. Do not present a high accuracy figure without a reproducible evaluation on held-out real data.
-
-### Step 7 — Show investigation recommendations
-Present the structured investigation as a list of ranked hypotheses and supporting/contradicting evidence. Explain that hypotheses guide a qualified technician's inspection; they are not confirmed root causes. Claim that Gemini/Vertex AI is invoked live only after confirming the deployed code calls the service and the relevant credentials/API permissions are configured.
-
-### Step 8 — Close with security and next steps
-Summarise 2FA, role-based account administration, health checks, and the production gaps: durable storage, secrets, restricted access, monitoring, backups, and real telemetry integration.
-
-## 6. Machine-learning and explainability flow
+## 5. Machine-learning and explainability flow
 
 The repository's `backend/core/ml_engine.py` includes:
 - Metadata for five named industrial datasets: UCI AI4I 2020, a SMART Lab CNC tool-wear dataset, NASA C-MAPSS, UCI SECOM, and Bosch Production Line Performance.
@@ -237,7 +159,7 @@ The repository's `backend/core/ml_engine.py` includes:
 - Monitoring for sensor drift, data quality, model drift, and changing plant conditions.
 - Explicit UI labelling of measured values, calculated values, model predictions, and generated hypotheses.
 
-## 7. Authentication and 2FA flow
+## 6. Authentication and 2FA flow
 
 ### Intended login stages
 1. The user submits email and password to `POST /api/v1/auth/login/`.
@@ -258,7 +180,7 @@ The code in `backend/core/totp_security.py` contains utilities for RFC 6238-styl
 - Use least-privilege role checks for each API action. The current model includes `SUPER_ADMIN` and `SYSTEM_ADMIN`; review permission methods and defaults carefully before production.
 - Audit enrolment, verification failures, role changes, account changes, and recovery events without logging passwords, OTP values, tokens, or secrets.
 
-## 8. API surface
+## 7. API surface
 
 The current Django URL configuration exposes the following paths:
 
@@ -286,7 +208,7 @@ curl -i "$BASE_URL/api/v1/health/"
 
 Use `-i` to inspect HTTP status and headers. A successful health endpoint confirms only that the endpoint responds; it does not prove that authentication, database persistence, ML, or external services are working.
 
-## 9. Repository structure
+## 8. Repository structure
 
 ```text
 aeroguard-enterprise-ai-main/
@@ -325,7 +247,7 @@ aeroguard-enterprise-ai-main/
 
 `frontend/node_modules/` and generated output may appear in a development ZIP. Do not rely on vendored `node_modules` in source control; rebuild dependencies from the lockfile. The SQLite file and compiled `dist/` output are present in the supplied archive, but production deployment should use controlled migrations/builds and durable managed storage.
 
-## 10. Run locally
+## 9. Run locally
 
 ### Prerequisites
 - Python 3.10 or a compatible Python version supported by the pinned dependencies.
@@ -380,7 +302,7 @@ python3 test_suite.py
 
 The test suite uses numerical/ML dependencies and may take time because it exercises multiple dataset configurations. A passing standalone suite does not replace Django API integration tests or a Cloud Run smoke test.
 
-## 11. Google Cloud Run deployment
+## 10. Google Cloud Run deployment
 
 ### Current deployment shown in the supplied screenshot
 The screenshot shows the following command completed successfully from the project root:
@@ -452,7 +374,7 @@ Use environment variables and Secret Manager for:
 
 Do not bake secrets into the Docker image, commit them to source control, or place them in frontend environment files that are shipped to the browser.
 
-## 12. Production-readiness gaps and recommended changes
+## 11. Production-readiness gaps and recommended changes
 
 This section is the priority list before using AeroGuard with real factories, accounts, or operational decisions.
 
@@ -515,7 +437,7 @@ This section is the priority list before using AeroGuard with real factories, ac
 - Define whether data is subject to customer contractual, industry, or jurisdiction-specific obligations; obtain qualified advice where needed.
 - Document the boundaries of AI recommendations and require qualified human approval for maintenance and safety actions.
 
-## 13. Prioritised future roadmap
+## 12. Prioritised future roadmap
 
 | Phase | Target | Deliverables / exit criteria |
 |---|---|---|
@@ -533,35 +455,7 @@ This section is the priority list before using AeroGuard with real factories, ac
 - **Reliability gate:** load test, alerting, rollback and incident-response drills completed.
 - **Human safety gate:** recommendations are advisory, procedures are visible, and only authorised people approve maintenance actions.
 
-## 14. Suggested 5–7 minute presentation script
-
-1. **0:00–0:40 — Problem and value:** “Unexpected machine downtime affects throughput, quality, and cost. AeroGuard combines condition signals, explainable alerts, and maintenance decision support.”
-2. **0:40–1:20 — Architecture:** show the browser, Angular interface, Django API, analytics functions, and Cloud Run deployment.
-3. **1:20–2:00 — Secure access:** demonstrate login and TOTP verification. Explain why the second factor is a separate stage.
-4. **2:00–3:00 — Normal vs abnormal telemetry:** compare the two synthetic CNC examples and point to the specific triggered rules.
-5. **3:00–4:00 — Cost impact:** show planned vs unplanned cost estimates and identify the assumptions.
-6. **4:00–5:00 — ML/XAI and investigation:** explain known-class prediction vs novelty detection, show feature attribution if verified, and distinguish a hypothesis from a confirmed root cause.
-7. **5:00–6:00 — Cloud deployment:** show the active Cloud Run revision, service URL, and successful health check without revealing secrets.
-8. **6:00–7:00 — Roadmap:** explain the next production milestones: durable database, restricted access, real sensor integration, validated models, monitoring, and human-approved maintenance workflows.
-
-### Presentation fallback plan
-If an external AI endpoint or model training operation is slow/unavailable, use a precomputed **clearly labelled** demo result. Do not claim the fallback is a live prediction. Keep a second browser tab open to Cloud Run logs and the health endpoint.
-
-## 15. Troubleshooting
-
-| Symptom | Likely cause | Checks |
-|---|---|---|
-| Cloud Run returns 502/503 | Container failed to start, port mismatch, startup crash, or resource exhaustion | Inspect Cloud Run revision logs; confirm Gunicorn binds to `0.0.0.0:8080`; check startup command and memory |
-| Root page loads but frontend assets fail | Angular build output path does not match Django template/static paths | Run production build; inspect `frontend/angular.json`, `STATICFILES_DIRS`, template directory and collected assets |
-| API returns 404 | Incorrect route, wrong base URL, or a feature function has no registered URL | Compare the request path with `backend/aeroguard_backend/urls.py` and `backend/core/urls.py` |
-| CORS error in browser | Frontend origin is not allowed or API base URL differs | Restrict and configure the exact intended origins; inspect browser network response |
-| Login succeeds but dashboard remains blocked | Frontend/backend disagree on 2FA state, token field, or token storage | Inspect network responses and auth state transitions; never log real tokens |
-| TOTP codes fail | Device clock drift, incorrect secret, malformed code, or enrollment mismatch | Check time synchronisation; ensure six-digit string preserves leading zero; verify the active vs pending secret flow |
-| Data disappears after redeploy/scale-to-zero | SQLite or files stored on ephemeral container filesystem | Move business data to managed durable storage and model files to Cloud Storage |
-| ML operation times out | Heavy computation inside synchronous web request or insufficient resources | Move training to a job/worker, add task status polling and limits |
-| Demo shows values after API failure | Mock fallback or swallowed API error | Inspect frontend error handling; show explicit unavailable/error state and log correlation ID |
-
-## 16. Security and safety notice
+## 13. Security and safety notice
 
 AeroGuard is a prototype/demo unless and until the production-readiness gates above have been completed. The current repository contains a SQLite database file and has code-level defaults that require review before production. The screenshot confirms that a Cloud Run deployment command succeeded; it does not certify the application as secure, durable, scalable, or ready for industrial operation.
 
